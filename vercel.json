@@ -1,6 +1,13 @@
 {
   "builds": [
     {
+      "src": "frontend/**",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/dist"
+      }
+    },
+    {
       "src": "backend-typescript/dist/main.js",
       "use": "@vercel/node"
     }
@@ -9,6 +16,10 @@
     {
       "src": "/api/(.*)",
       "dest": "backend-typescript/dist/main.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/$1"
     }
   ]
 }

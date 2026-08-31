@@ -1,6 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { Module, Controller, Get, Post, Body } from '@nestjs/common';
+import { Module, Controller, Get, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+
+// ========================================
+// CONFIGURATION
+// ========================================
+
+const API_VERSION = 'v1';
+const API_PREFIX = `api/${API_VERSION}`;
 
 // ========================================
 // DONNÉES
@@ -30,8 +37,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: 'kalumemmanueljohn@gmail.com',
-    pass: 'nmbdltnqdyvcqwdz',  // ← Ton mot de passe d'application
+    user: process.env.EMAIL_USER || 'kalumemmanueljohn@gmail.com',
+    pass: process.env.EMAIL_PASS || 'nmbdltnqdyvcqwdz',
   },
 });
 
@@ -51,7 +58,7 @@ transporter.verify((error, success) => {
 async function sendEmail(to: string, subject: string, html: string, text?: string) {
   try {
     const info = await transporter.sendMail({
-      from: 'kalumemmanueljohn@gmail.com',
+      from: process.env.EMAIL_USER || 'kalumemmanueljohn@gmail.com',
       to: to,
       subject: subject,
       text: text || html.replace(/<[^>]*>/g, ''),
@@ -90,32 +97,32 @@ function getAdminEmailTemplate(data: any) {
     <body>
       <div class="container">
         <div class="header">
-          <h1>Nouvelle demande de devis</h1>
+          <h1>🔔 Nouvelle demande de devis</h1>
           <p>Cometech - Solutions Digitales</p>
         </div>
         <div class="content">
           <p><span class="badge">Nouveau</span></p>
           
-          <h3>Informations personnelles</h3>
-          <div class="field"><span class="label">Prenom :</span> ${data.firstName || 'Non renseigne'}</div>
-          <div class="field"><span class="label">Nom :</span> ${data.lastName || 'Non renseigne'}</div>
-          <div class="field"><span class="label">Email :</span> ${data.email || 'Non renseigne'}</div>
-          <div class="field"><span class="label">Telephone :</span> ${data.phone || 'Non renseigne'}</div>
+          <h3>👤 Informations personnelles</h3>
+          <div class="field"><span class="label">Prénom :</span> ${data.firstName || 'Non renseigné'}</div>
+          <div class="field"><span class="label">Nom :</span> ${data.lastName || 'Non renseigné'}</div>
+          <div class="field"><span class="label">Email :</span> ${data.email || 'Non renseigné'}</div>
+          <div class="field"><span class="label">Téléphone :</span> ${data.phone || 'Non renseigné'}</div>
           
           <hr>
           
-          <h3>Details du projet</h3>
-          <div class="field"><span class="label">Service souhaite :</span> ${data.serviceType || 'Non renseigne'}</div>
+          <h3>💼 Détails du projet</h3>
+          <div class="field"><span class="label">Service souhaité :</span> ${data.serviceType || 'Non renseigné'}</div>
           <div class="field"><span class="label">Message :</span></div>
           <p style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #d4a853;">
             ${data.message || 'Aucun message'}
           </p>
           
           <hr>
-          <p style="font-size: 14px; color: #666;">Recu le : ${new Date().toLocaleString('fr-FR')}</p>
+          <p style="font-size: 14px; color: #666;">Reçu le : ${new Date().toLocaleString('fr-FR')}</p>
         </div>
         <div class="footer">
-          <p>Cometech - Donnees. Dynamique. Performance.</p>
+          <p>Cometech - Données. Dynamique. Performance.</p>
           <p>Kinshasa, RDC | +243 859 323 184</p>
         </div>
       </div>
@@ -145,22 +152,22 @@ function getClientEmailTemplate(data: any) {
     <body>
       <div class="container">
         <div class="header">
-          <h1>Cometech</h1>
-          <p>Donnees. Dynamique. Performance.</p>
+          <h1>✨ Cometech</h1>
+          <p>Données. Dynamique. Performance.</p>
         </div>
         <div class="content">
           <h2>Bonjour ${data.firstName || ''} ${data.lastName || ''},</h2>
           
-          <p>Nous avons bien recu votre demande de devis pour un projet de <strong>${data.serviceType || 'service'}</strong>.</p>
+          <p>Nous avons bien reçu votre demande de devis pour un projet de <strong>${data.serviceType || 'service'}</strong>.</p>
           
           <div class="message-box">
-            <p><strong>Recapitulatif de votre demande :</strong></p>
-            <p><strong>Service :</strong> ${data.serviceType || 'Non specifie'}</p>
+            <p><strong>📋 Récapitulatif de votre demande :</strong></p>
+            <p><strong>Service :</strong> ${data.serviceType || 'Non spécifié'}</p>
             <p><strong>Message :</strong></p>
             <p style="font-style: italic; color: #555;">"${data.message || 'Aucun message'}"</p>
           </div>
 
-          <p>Notre equipe va analyser votre demande dans les plus brefs delais. 
+          <p>Notre équipe va analyser votre demande dans les plus brefs délais. 
           Nous vous contacterons sous <strong>48 heures</strong>.</p>
 
           <p style="text-align: center; margin: 30px 0;">
@@ -168,18 +175,18 @@ function getClientEmailTemplate(data: any) {
           </p>
 
           <div class="contact-box">
-            <p style="margin: 0;"><strong>Contact rapide :</strong></p>
+            <p style="margin: 0;"><strong>📞 Contact rapide :</strong></p>
             <p style="margin: 5px 0;">+243 859 323 184</p>
             <p style="margin: 0;">kalumemmanueljohn@gmail.com</p>
           </div>
 
           <p style="margin-top: 20px; color: #666;">
-            Nous avons hate de collaborer avec vous !
+            Nous avons hâte de collaborer avec vous !
           </p>
         </div>
         <div class="footer">
-          <p>&copy; 2026 Cometech - Tous droits reserves</p>
-          <p>Kinshasa, Republique Democratique du Congo</p>
+          <p>© 2026 Cometech - Tous droits réservés</p>
+          <p>Kinshasa, République Démocratique du Congo</p>
         </div>
       </div>
     </body>
@@ -203,38 +210,56 @@ export class ServicesController {
 export class ContactController {
   @Post()
   async create(@Body() body: any) {
-    const newContact = { 
-      id: contacts.length + 1, 
-      ...body, 
-      createdAt: new Date() 
-    };
-    contacts.push(newContact);
-    
-    // === ENVOYER LES EMAILS ===
-    
-    // 1. Email à l'administrateur
-    const adminHtml = getAdminEmailTemplate(body);
-    await sendEmail(
-      'kalumemmanueljohn@gmail.com',
-      `Nouvelle demande de devis - ${body.firstName || ''} ${body.lastName || ''}`,
-      adminHtml
-    );
-    
-    // 2. Email de confirmation au client
-    if (body.email) {
-      const clientHtml = getClientEmailTemplate(body);
+    try {
+      // Validation des champs obligatoires
+      if (!body.firstName || !body.lastName || !body.email || !body.phone || !body.message) {
+        throw new HttpException(
+          'Tous les champs sont obligatoires',
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const newContact = { 
+        id: contacts.length + 1, 
+        ...body, 
+        createdAt: new Date() 
+      };
+      contacts.push(newContact);
+      
+      // === ENVOYER LES EMAILS ===
+      
+      // 1. Email à l'administrateur
+      const adminHtml = getAdminEmailTemplate(body);
       await sendEmail(
-        body.email,
-        'Confirmation de votre demande - Cometech',
-        clientHtml
+        process.env.EMAIL_USER || 'kalumemmanueljohn@gmail.com',
+        `🔔 Nouvelle demande de devis - ${body.firstName || ''} ${body.lastName || ''}`,
+        adminHtml
+      );
+      
+      // 2. Email de confirmation au client
+      if (body.email) {
+        const clientHtml = getClientEmailTemplate(body);
+        await sendEmail(
+          body.email,
+          '📩 Confirmation de votre demande - Cometech',
+          clientHtml
+        );
+      }
+      
+      return { 
+        success: true, 
+        message: 'Votre demande a été envoyée avec succès ! Nous vous contacterons sous 48h.',
+        data: newContact 
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Une erreur est survenue lors du traitement de votre demande',
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-    
-    return { 
-      success: true, 
-      message: 'Votre demande a ete envoyee avec succes ! Nous vous contacterons sous 48h.',
-      data: newContact 
-    };
   }
 }
 
@@ -261,14 +286,32 @@ export class AppModule {}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  app.setGlobalPrefix('api/v1');
   
-  // Port dynamique pour Vercel (ou 3001 en local)
+  // CORS pour autoriser Vercel et le développement local
+  app.enableCors({
+    origin: [
+      'https://cometech-kal-project.vercel.app',
+      'https://cometech.onrender.com',
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://cometech-fuamkmuuh-kalumemmanueljohn-blips-projects.vercel.app',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+  
+  // Préfixe global pour toutes les routes
+  app.setGlobalPrefix(API_PREFIX);
+  
+  // Port dynamique pour Render (ou 3001 en local)
   const port = process.env.PORT || 3001;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
+  
   console.log(`🚀 Backend running on http://localhost:${port}`);
-  console.log('📧 Service email active (Gmail)');
+  console.log(`📡 API prefix: /${API_PREFIX}`);
+  console.log(`📧 Service email activé (Gmail)`);
+  console.log(`✅ CORS configuré pour Vercel`);
 }
 
 bootstrap();

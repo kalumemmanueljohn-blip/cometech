@@ -22,7 +22,7 @@ const statistics = [
 let contacts: any[] = [];
 
 // ========================================
-// CONFIGURATION EMAIL - GMAIL DIRECT
+// CONFIGURATION EMAIL - GMAIL
 // ========================================
 
 const transporter = nodemailer.createTransport({
@@ -31,7 +31,7 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: 'kalumemmanueljohn@gmail.com',
-    pass: 'nmbdltnqdyvcqwdz',
+    pass: 'nmbdltnqdyvcqwdz',  // ← Ton mot de passe d'application
   },
 });
 
@@ -97,22 +97,22 @@ function getAdminEmailTemplate(data: any) {
           <p><span class="badge">Nouveau</span></p>
           
           <h3>Informations personnelles</h3>
-          <div class="field"><span class="label">Prénom :</span> ${data.firstName || 'Non renseigné'}</div>
-          <div class="field"><span class="label">Nom :</span> ${data.lastName || 'Non renseigné'}</div>
-          <div class="field"><span class="label">Email :</span> ${data.email || 'Non renseigné'}</div>
-          <div class="field"><span class="label">Téléphone :</span> ${data.phone || 'Non renseigné'}</div>
+          <div class="field"><span class="label">Prenom :</span> ${data.firstName || 'Non renseigne'}</div>
+          <div class="field"><span class="label">Nom :</span> ${data.lastName || 'Non renseigne'}</div>
+          <div class="field"><span class="label">Email :</span> ${data.email || 'Non renseigne'}</div>
+          <div class="field"><span class="label">Telephone :</span> ${data.phone || 'Non renseigne'}</div>
           
           <hr>
           
-          <h3>Détails du projet</h3>
-          <div class="field"><span class="label">Service souhaité :</span> ${data.serviceType || 'Non renseigné'}</div>
+          <h3>Details du projet</h3>
+          <div class="field"><span class="label">Service souhaite :</span> ${data.serviceType || 'Non renseigne'}</div>
           <div class="field"><span class="label">Message :</span></div>
           <p style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #d4a853;">
             ${data.message || 'Aucun message'}
           </p>
           
           <hr>
-          <p style="font-size: 14px; color: #666;">Reçu le : ${new Date().toLocaleString('fr-FR')}</p>
+          <p style="font-size: 14px; color: #666;">Recu le : ${new Date().toLocaleString('fr-FR')}</p>
         </div>
         <div class="footer">
           <p>Cometech - Donnees. Dynamique. Performance.</p>
@@ -232,7 +232,7 @@ export class ContactController {
     
     return { 
       success: true, 
-      message: 'Votre demande a été envoyée avec succès ! Nous vous contacterons sous 48h.',
+      message: 'Votre demande a ete envoyee avec succes ! Nous vous contacterons sous 48h.',
       data: newContact 
     };
   }
@@ -256,7 +256,7 @@ export class StatisticsController {
 export class AppModule {}
 
 // ========================================
-// LANCEMENT - PORT DYNAMIQUE POUR VERCEL
+// LANCEMENT
 // ========================================
 
 async function bootstrap() {
@@ -264,11 +264,11 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix('api/v1');
   
-  // ✅ Port dynamique pour Vercel (ou 3001 en local)
+  // Port dynamique pour Vercel (ou 3001 en local)
   const port = process.env.PORT || 3001;
   await app.listen(port);
   console.log(`🚀 Backend running on http://localhost:${port}`);
-  console.log('📧 Service email activé (Gmail)');
+  console.log('📧 Service email active (Gmail)');
 }
 
 bootstrap();

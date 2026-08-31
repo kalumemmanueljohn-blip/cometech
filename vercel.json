@@ -1,0 +1,25 @@
+{
+  "builds": [
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static-build"
+    },
+    {
+      "src": "backend-typescript/dist/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend-typescript/dist/main.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/dist/$1"
+    }
+  ],
+  "buildCommand": "cd frontend && npm install && npm run build && cd ../backend-typescript && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && npm install"
+}

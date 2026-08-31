@@ -1,0 +1,39 @@
+# Python (Django - supprimé)
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+
+# Node
+node_modules/
+dist/
+.build/
+*.log
+package-lock.json
+
+# Backend TypeScript
+backend-typescript/dist/
+backend-typescript/node_modules/
+backend-typescript/.env
+backend-typescript/tsconfig.build.tsbuildinfo
+
+# Frontend
+frontend/dist/
+frontend/node_modules/
+frontend/.env.local
+frontend/.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel/

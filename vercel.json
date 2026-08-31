@@ -1,16 +1,11 @@
 {
-  "outputDirectory": "frontend/dist",
   "builds": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/dist",
-        "outputDirectory": "frontend/dist"
-      }
+      "src": "frontend/**",
+      "use": "@vercel/static"
     },
     {
-      "src": "backend-typescript/package.json",
+      "src": "backend-typescript/dist/main.js",
       "use": "@vercel/node"
     }
   ],
